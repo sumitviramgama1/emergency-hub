@@ -3,7 +3,11 @@
   "routes":[
     {
     "src":"/[^/]+",
-    "dest":"/"
+    "dest":"/index.html"
+    },
+    {
+      "src":"/(.*)",
+      "dest":"/index.html"
     }
   ]
 }
