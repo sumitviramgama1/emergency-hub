@@ -109,7 +109,7 @@ function MedicalEmergency() {
         body: JSON.stringify({ userId: user.userId, serviceProviderPhone }),
       });
   
-      const data = await response.json();
+      // const data = await response.json();
   
       if (response.ok) {
         alert('Request sent successfully');
