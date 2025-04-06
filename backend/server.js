@@ -9,15 +9,13 @@ const bodyParser = require("body-parser");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 
-
-
 const app = express();
 connectDB();
 app.use(bodyParser.json());
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: "*" }));
 
-app.use('/api/auth', authRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/gemini", geminiRoutes);
 app.use("/api/location", locationRoutes);
 app.use("/api/roadside-services", roadsideServiceRoutes);
