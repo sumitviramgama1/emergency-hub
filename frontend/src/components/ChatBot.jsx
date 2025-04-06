@@ -21,7 +21,7 @@ function ChatBot() {
   const messagesEndRef = useRef(null);
 
   // Get the API URL from Vite environment variable or use default
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
   // Auto-scroll to bottom of messages
   useEffect(() => {
@@ -152,7 +152,10 @@ function ChatBot() {
             )}
             <div ref={messagesEndRef} />
           </div>
-          <form onSubmit={handleSubmit} className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex">
+          <form
+            onSubmit={handleSubmit}
+            className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex"
+          >
             <input
               type="text"
               value={input}

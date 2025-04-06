@@ -23,8 +23,10 @@ export const getCurrentLocation = () => {
 
 export const getLocationName = async (latitude, longitude) => {
   try {
-    const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
-    const response = await fetch(`https://api.opencagedata.com/geocode/v1/json?q=52.5432379%2C+13.4142133&key=${apiKey}`);
+    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY; // Use Vite's environment variable
+    const response = await fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
+    );
     const data = await response.json();
 
     // Check for errors first
@@ -34,7 +36,6 @@ export const getLocationName = async (latitude, longitude) => {
     }
 
     if (data.status === "OK" && data.results.length > 0) {
-      console.log("Location:", data.results[0].formatted_address);
       return data.results[0].formatted_address;
     } else {
       console.error("No address found or status not OK:", data.status);
