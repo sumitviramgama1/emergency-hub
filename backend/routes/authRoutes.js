@@ -9,9 +9,18 @@ const {
   rejectRequest
 } = require('../controllers/authController');
 const Request = require('../models/Request');
+const cors = require("cors");
+
+
 
 const router = express.Router();
-router.get('/requests', async (req, res) => {
+const corsOptions = {
+  origin: ["https://emergency-hub-kxyn.vercel.app", "http://localhost:3000"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+router.get('/requests',cors(corsOptions), async (req, res) => {
   const { serviceProviderId } = req.query;
 //  console.log(serviceProviderId);
   try {
@@ -23,7 +32,7 @@ router.get('/requests', async (req, res) => {
   }
 });
 
-router.get('/srequests', async (req, res) => {
+router.get('/srequests',cors(corsOptions), async (req, res) => {
   const { userId } = req.query;
   try {
     const requests = await Request.find({ userId });
@@ -43,12 +52,12 @@ router.get('/srequests', async (req, res) => {
   }
 });
 
-router.post('/register/user', registerUser);
-router.post('/login/user', loginUser);
-router.post('/register/service-provider', registerServiceProvider);
-router.post('/login/service-provider', loginServiceProvider);
-router.post('/request/send', sendRequest);
-router.post('/request/accept', acceptRequest);
-router.post('/request/reject', rejectRequest);
+router.post('/register/user',cors(corsOptions), registerUser);
+router.post('/login/user',cors(corsOptions), loginUser);
+router.post('/register/service-provider',cors(corsOptions), registerServiceProvider);
+router.post('/login/service-provider',cors(corsOptions), loginServiceProvider);
+router.post('/request/send',cors(corsOptions), sendRequest);
+router.post('/request/accept',cors(corsOptions), acceptRequest);
+router.post('/request/reject',cors(corsOptions), rejectRequest);
 
 module.exports = router;

@@ -1,9 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const ServiceRequest = require('../models/ServiceRequest');
+const cors = require("cors");
+const corsOptions = {
+  origin: ["https://emergency-hub-kxyn.vercel.app", "http://localhost:3000"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
 
 // Get all requests for a service provider
-router.get('/requests/:providerId', async (req, res) => {
+router.get('/requests/:providerId',cors(corsOptions), async (req, res) => {
   try {
     const requests = await ServiceRequest.find({
       serviceProviderId: req.params.providerId
@@ -17,7 +24,7 @@ router.get('/requests/:providerId', async (req, res) => {
 });
 
 // Handle request action (accept/reject)
-router.post('/request/action', async (req, res) => {
+router.post('/request/action',cors(corsOptions), async (req, res) => {
   try {
     const { requestId, action, serviceProviderId } = req.body;
 

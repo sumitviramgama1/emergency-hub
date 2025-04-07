@@ -1,11 +1,18 @@
 const express = require("express");
 const axios = require("axios");
 require("dotenv").config();
+const cors = require("cors");
 
 const router = express.Router();
 const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+const corsOptions = {
+  origin: ["https://emergency-hub-kxyn.vercel.app", "http://localhost:3000"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
 // Get nearby roadside assistance services
-router.get("/nearby", async (req, res) => {
+router.get("/nearby",cors(corsOptions), async (req, res) => {
   try {
     const { latitude, longitude, EmergencyType } = req.query;
     let placesUrl;
@@ -27,7 +34,7 @@ router.get("/nearby", async (req, res) => {
   }
 });
 // Get details for a specific place
-router.get("/place-details", async (req, res) => {
+router.get("/place-details",cors(corsOptions), async (req, res) => {
   try {
     const { placeId } = req.query;
     const apiKey = process.env.GOOGLE_MAPS_API_KEY;
@@ -40,7 +47,7 @@ router.get("/place-details", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch place details" });
   }
 });
-router.get("/distance-duration", async (req, res) => {
+router.get("/distance-duration",cors(corsOptions), async (req, res) => {
   try {
     const { origins, destinations } = req.query;
 
@@ -91,7 +98,7 @@ router.get("/distance-duration", async (req, res) => {
   }
 });
 
-router.get("/route", async (req, res) => {
+router.get("/route",cors(corsOptions), async (req, res) => {
   try {
     const { origin, destination } = req.query;
 
@@ -143,7 +150,7 @@ router.get("/route", async (req, res) => {
 });
 
 // Add this combined route to roadsideServiceRoute.js
-router.get("/service-details-with-distance", async (req, res) => {
+router.get("/service-details-with-distance",cors(corsOptions), async (req, res) => {
   try {
     const { placeId, origin } = req.query;
 
