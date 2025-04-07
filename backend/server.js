@@ -24,8 +24,14 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions)); // Apply CORS middleware
-app.options("*", cors(corsOptions)); // Handle preflight requests explicitly
-
+// filepath: e:\emergency hub\backend\server.js
+app.options("*", (req, res) => {
+  res.header("Access-Control-Allow-Origin", req.headers.origin);
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, x-Requested-With");
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.sendStatus(200);
+});
 app.use("/api/auth", authRoutes);
 app.use("/api/gemini", geminiRoutes);
 app.use("/api/location", locationRoutes);
