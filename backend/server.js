@@ -21,9 +21,10 @@ app.use(
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "x-Requested-With"],
   })
 );
+app.use(cors(corsOptions));
 app.options("*", cors()); // Handle preflight requests explicitly
 
 app.use("/api/auth", authRoutes);
