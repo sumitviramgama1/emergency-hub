@@ -1,29 +1,30 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { AlertCircle, User, Lock } from 'lucide-react';
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { AlertCircle, User, Lock } from "lucide-react";
 
 const UserLogin = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const API_URL = import.meta.env.VITE_BACKEND_URL;
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch('http://localhost:5000/api/auth/login/user', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const response = await fetch(`${API_URL}/api/auth/login/user`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
     });
     const data = await response.json();
     if (data.token) {
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('role', 'user');
-      localStorage.setItem('isLoggedIn', true);
-      localStorage.setItem('userId', data.userId);
-      navigate('/home');
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("role", "user");
+      localStorage.setItem("isLoggedIn", true);
+      localStorage.setItem("userId", data.userId);
+      navigate("/home");
     } else {
-      alert('Login failed');
+      alert("Login failed");
     }
   };
 
@@ -42,10 +43,12 @@ const UserLogin = () => {
               User Login
             </h2>
           </div>
-          
+
           <form onSubmit={handleSubmit} className="p-8">
             <div className="mb-4">
-              <label className="block text-gray-700 dark:text-gray-300 mb-2">Username</label>
+              <label className="block text-gray-700 dark:text-gray-300 mb-2">
+                Username
+              </label>
               <div className="flex items-center border border-gray-300 dark:border-gray-700 rounded-lg">
                 <div className="pl-3 text-gray-500 dark:text-gray-400">
                   <User size={20} />
@@ -61,7 +64,9 @@ const UserLogin = () => {
             </div>
 
             <div className="mb-6">
-              <label className="block text-gray-700 dark:text-gray-300 mb-2">Password</label>
+              <label className="block text-gray-700 dark:text-gray-300 mb-2">
+                Password
+              </label>
               <div className="flex items-center border border-gray-300 dark:border-gray-700 rounded-lg">
                 <div className="pl-3 text-gray-500 dark:text-gray-400">
                   <Lock size={20} />
@@ -86,8 +91,11 @@ const UserLogin = () => {
             </motion.button>
 
             <p className="mt-4 text-center text-gray-600 dark:text-gray-400">
-              Don't have an account?{' '}
-              <Link to="/user-signup" className="text-blue-600 dark:text-blue-400 hover:underline">
+              Don't have an account?{" "}
+              <Link
+                to="/user-signup"
+                className="text-blue-600 dark:text-blue-400 hover:underline"
+              >
                 Sign up
               </Link>
             </p>

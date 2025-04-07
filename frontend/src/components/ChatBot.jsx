@@ -21,7 +21,7 @@ function ChatBot() {
   const messagesEndRef = useRef(null);
 
   // Get the API URL from Vite environment variable or use default
-  const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  const API_URL = import.meta.env.VITE_BACKEND_URL;
 
   // Auto-scroll to bottom of messages
   useEffect(() => {

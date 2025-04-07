@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { AlertCircle, User, Lock, Phone, Info } from "lucide-react";
 
 const ServiceProviderSignup = () => {
+  const API_URL = import.meta.env.VITE_BACKEND_URL;
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [serviceType, setServiceType] = useState("");
@@ -20,7 +22,7 @@ const ServiceProviderSignup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await fetch(
-      "import.meta.env.VITE_BACKEND_URL/api/auth/register/service-provider",
+      `${API_URL}/api/auth/register/service-provider`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

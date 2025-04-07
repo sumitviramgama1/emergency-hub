@@ -24,6 +24,7 @@ function FuelEmergency() {
   const EmergencyType = "fuel";
   const { location, locationName, loading, locationError, retryLocation } =
     useLocationContext();
+    const API_URL = import.meta.env.VITE_BACKEND_URL;
 
   const {
     map,
@@ -60,7 +61,7 @@ function FuelEmergency() {
   const fetchReqForStatus = async (serviceProviderPhone) => {
     try {
       const response = await axios.get(
-        `import.meta.env.VITE_BACKEND_URL/api/auth/srequests`,
+        `${API_URL}/api/auth/srequests`,
         {
           params: {
             userId: user.userId,
@@ -94,7 +95,7 @@ function FuelEmergency() {
 
     try {
       const response = await fetch(
-        "import.meta.env.VITE_BACKEND_URL/api/auth/request/send",
+        `${API_URL}/api/auth/request/send`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

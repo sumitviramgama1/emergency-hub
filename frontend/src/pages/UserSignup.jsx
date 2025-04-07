@@ -1,33 +1,39 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { AlertCircle, User, Lock, Phone } from 'lucide-react';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AlertCircle, User, Lock, Phone } from "lucide-react";
 
 const UserSignup = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [countryCode, setCountryCode] = useState('+1');
+  const API_URL = import.meta.env.VITE_BACKEND_URL;
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [countryCode, setCountryCode] = useState("+1");
   const navigate = useNavigate();
 
   const countryCodes = [
-    { code: '+1', name: 'United States' },
-    { code: '+44', name: 'United Kingdom' },
-    { code: '+91', name: 'India' },
-    { code: '+61', name: 'Australia' },
+    { code: "+1", name: "United States" },
+    { code: "+44", name: "United Kingdom" },
+    { code: "+91", name: "India" },
+    { code: "+61", name: "Australia" },
   ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch('http://localhost:5000/api/auth/register/user', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password, phoneNumber: `${countryCode}${phoneNumber}` }),
+    const response = await fetch(`${API_URL}/api/auth/register/user`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username,
+        password,
+        phoneNumber: `${countryCode}${phoneNumber}`,
+      }),
     });
     const data = await response.json();
     if (data.message) {
-      navigate('/user-login');
+      navigate("/user-login");
     } else {
-      alert('Signup failed');
+      alert("Signup failed");
     }
   };
 
@@ -41,10 +47,12 @@ const UserSignup = () => {
               User Signup
             </h2>
           </div>
-          
+
           <form onSubmit={handleSubmit} className="p-8">
             <div className="mb-4">
-              <label className="block text-gray-700 dark:text-gray-300 mb-2">Username</label>
+              <label className="block text-gray-700 dark:text-gray-300 mb-2">
+                Username
+              </label>
               <div className="flex items-center border border-gray-300 dark:border-gray-700 rounded-lg">
                 <div className="pl-3 text-gray-500 dark:text-gray-400">
                   <User size={20} />
@@ -60,7 +68,9 @@ const UserSignup = () => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-gray-700 dark:text-gray-300 mb-2">Password</label>
+              <label className="block text-gray-700 dark:text-gray-300 mb-2">
+                Password
+              </label>
               <div className="flex items-center border border-gray-300 dark:border-gray-700 rounded-lg">
                 <div className="pl-3 text-gray-500 dark:text-gray-400">
                   <Lock size={20} />
@@ -76,7 +86,9 @@ const UserSignup = () => {
             </div>
 
             <div className="mb-6">
-              <label className="block text-gray-700 dark:text-gray-300 mb-2">Phone Number</label>
+              <label className="block text-gray-700 dark:text-gray-300 mb-2">
+                Phone Number
+              </label>
               <div className="flex">
                 <select
                   className="w-1/4 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg mr-2 bg-transparent dark:text-white"
@@ -112,8 +124,11 @@ const UserSignup = () => {
             </button>
 
             <p className="mt-4 text-center text-gray-600 dark:text-gray-400">
-              Already have an account?{' '}
-              <Link to="/user-login" className="text-blue-600 dark:text-blue-400 hover:underline">
+              Already have an account?{" "}
+              <Link
+                to="/user-login"
+                className="text-blue-600 dark:text-blue-400 hover:underline"
+              >
                 Login
               </Link>
             </p>

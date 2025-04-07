@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import {
-  useMap, 
-  useNearbyServices, 
+  useMap,
+  useNearbyServices,
   useRouting,
   useTroubleshootingGuides,
-  useEmergencyService
+  useEmergencyService,
 } from "../hooks";
 import { useLocationContext } from "../contexts/LocationContext";
 import GoogleMapComponent from "../components/GoogleMapComponent";
@@ -22,13 +22,8 @@ import useAuth from "../hooks/useAuth";
 function HospitalEmergency() {
   const { user } = useAuth();
   const EmergencyType = "hospital";
-  const { 
-    location, 
-    locationName, 
-    loading, 
-    locationError, 
-    retryLocation 
-  } = useLocationContext();
+  const { location, locationName, loading, locationError, retryLocation } =
+    useLocationContext();
 
   const {
     map,
@@ -50,78 +45,73 @@ function HospitalEmergency() {
     fetchServiceDetailsWithDistance,
   } = useNearbyServices(location, EmergencyType);
 
-  const { 
-    displayRouteOnMap, 
-    updateRouteForNewPosition 
-  } = useRouting(
+  const { displayRouteOnMap, updateRouteForNewPosition } = useRouting(
     location,
     map,
     setCurrentRoute,
     setDestinationMarker
   );
+  const API_URL = import.meta.env.VITE_BACKEND_URL;
 
-  const { 
-    guides, 
-    selectedGuide, 
-    openGuide, 
-    closeGuide 
-  } = useTroubleshootingGuides();
+  const { guides, selectedGuide, openGuide, closeGuide } =
+    useTroubleshootingGuides();
 
-  const { 
-    emergencyLoading, 
-    handleSOS 
-  } = useEmergencyService(location);
+  const { emergencyLoading, handleSOS } = useEmergencyService(location);
 
   const fetchReqForStatus = async () => {
-    const serviceProviderPhone = '+919879806717';
+    const serviceProviderPhone = "+919879806717";
     try {
-      const response = await fetch(`http://localhost:5000/api/auth/srequests?userId=${user.userId}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const response = await fetch(
+        `${API_URL}/api/auth/srequests?userId=${user.userId}`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
       const data = await response.json();
       if (data.message === "Request accepted") {
-        alert('Request accepted');
+        alert("Request accepted");
         window.location.href = `tel:${serviceProviderPhone}`;
-      }
-      else if (data.message === "Request rejected") {
-        alert('Request rejected');
-      } 
-      else if (data.message === "Request pending") {
-        console.log('Request not yet accepted');
+      } else if (data.message === "Request rejected") {
+        alert("Request rejected");
+      } else if (data.message === "Request pending") {
+        console.log("Request not yet accepted");
       }
     } catch (error) {
-      console.error('Error fetching requests:', error);
+      console.error("Error fetching requests:", error);
     }
   };
-  
+
   const requestAssistance = async (service) => {
-    const serviceProviderPhone = '+919898674426';
+    const serviceProviderPhone = "+919898674426";
     if (!user) {
-      alert('Please log in to request assistance');
+      alert("Please log in to request assistance");
       return;
     }
-  
+
     try {
-      const response = await fetch('http://localhost:5000/api/auth/request/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user.userId, serviceProviderPhone }),
-      });
-  
+      const response = await fetch(
+        `${API_URL}/api/auth/request/send`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: user.userId, serviceProviderPhone }),
+        }
+      );
+
       // const data = await response.json();
-  
+
       if (response.ok) {
-        alert('Request sent successfully');
+        alert("Request sent successfully");
         setTimeout(() => {
           fetchReqForStatus(); // Initial call after 15 seconds
           setInterval(fetchReqForStatus, 4000); // Subsequent calls every 4 seconds
         }, 15000);
       } else {
-        alert('Failed to send request');
+        alert("Failed to send request");
       }
     } catch (error) {
-      console.error('Error sending request:', error);
+      console.error("Error sending request:", error);
     }
   };
 
@@ -139,7 +129,9 @@ function HospitalEmergency() {
 
   // Function to handle requesting help
   const requestHelp = (service) => {
-    alert(`Assistance requested from ${service.name}. They will contact you shortly.`);
+    alert(
+      `Assistance requested from ${service.name}. They will contact you shortly.`
+    );
   };
 
   return (
@@ -542,7 +534,9 @@ function HospitalEmergency() {
                                       {serviceDetails.placeDetails.phone !==
                                       "Not available" ? (
                                         <button
-                                          onClick={()=>requestAssistance(service)}
+                                          onClick={() =>
+                                            requestAssistance(service)
+                                          }
                                           className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
                                         >
                                           <Phone size={16} />

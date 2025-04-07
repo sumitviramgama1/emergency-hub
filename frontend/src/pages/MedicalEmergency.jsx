@@ -66,6 +66,7 @@ function MedicalEmergency() {
     openGuide, 
     closeGuide 
   } = useTroubleshootingGuides();
+  const API_URL = import.meta.env.VITE_BACKEND_URL;
 
   const { 
     emergencyLoading, 
@@ -75,7 +76,7 @@ function MedicalEmergency() {
   const fetchReqForStatus = async () => {
     const serviceProviderPhone = '+919879806717';
     try {
-      const response = await fetch(`http://localhost:5000/api/auth/srequests?userId=${user.userId}`, {
+      const response = await fetch(`${API_URL}/api/auth/srequests?userId=${user.userId}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -103,7 +104,7 @@ function MedicalEmergency() {
     }
   
     try {
-      const response = await fetch('http://localhost:5000/api/auth/request/send', {
+      const response = await fetch(`${API_URL}/api/auth/request/send`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: user.userId, serviceProviderPhone }),

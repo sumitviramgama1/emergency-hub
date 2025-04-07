@@ -3,13 +3,15 @@ import { useNavigate, Link } from 'react-router-dom';
 import { AlertCircle, User, Lock } from 'lucide-react';
 
 const ServiceProviderLogin = () => {
+  const API_URL = import.meta.env.VITE_BACKEND_URL;
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch('http://localhost:5000/api/auth/login/service-provider', {
+    const response = await fetch(`${API_URL}/api/auth/login/service-provider`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
