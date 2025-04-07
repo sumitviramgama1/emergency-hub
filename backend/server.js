@@ -13,8 +13,11 @@ const app = express();
 connectDB();
 app.use(bodyParser.json());
 app.use(express.json());
-app.use(cors({ origin: "*" }));
-
+app.use(cors({
+  origin: ['https://emergency-hub-kxyn.vercel.app', 'http://localhost:3000'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use("/api/auth", authRoutes);
 app.use("/api/gemini", geminiRoutes);
 app.use("/api/location", locationRoutes);
