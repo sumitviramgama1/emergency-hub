@@ -26,6 +26,9 @@ function RoadsideAssistance() {
   const { location, locationName, loading, locationError, retryLocation } =
     useLocationContext();
 
+  // Ensure location is a valid object with default values to prevent null errors
+  const safeLocation = location || { latitude: null, longitude: null };
+
   const {
     map,
     currentRoute,
@@ -35,7 +38,7 @@ function RoadsideAssistance() {
     mapContainerStyle,
     getMapCenter,
     handleMapLoad,
-  } = useMap(location);
+  } = useMap(safeLocation);
 
   const {
     servicesWithDistances,
@@ -44,10 +47,10 @@ function RoadsideAssistance() {
     serviceDetails,
     loadingDetails,
     fetchServiceDetailsWithDistance,
-  } = useNearbyServices(location, EmergencyType);
+  } = useNearbyServices(safeLocation, EmergencyType);
 
   const { displayRouteOnMap, updateRouteForNewPosition } = useRouting(
-    location,
+    safeLocation,
     map,
     setCurrentRoute,
     setDestinationMarker
@@ -58,9 +61,11 @@ function RoadsideAssistance() {
   const { guides, selectedGuide, openGuide, closeGuide } =
     useTroubleshootingGuides();
 
-  const { emergencyLoading, handleSOS } = useEmergencyService(location);
+  const { emergencyLoading, handleSOS } = useEmergencyService(safeLocation);
 
   const fetchReqForStatus = async (serviceProviderPhone) => {
+    if (!user || !user.userId) return;
+    
     try {
       const response = await axios.get(
         `${API_URL}/api/auth/srequests`,
@@ -105,8 +110,6 @@ function RoadsideAssistance() {
         }
       );
 
-      // const data = await response.json();
-
       if (response.ok) {
         alert("Request sent successfully");
         setTimeout(() => {
@@ -117,8 +120,8 @@ function RoadsideAssistance() {
           );
         }, 8000);
       } else {
-        console.log("Service provider not on this plateform yet");
-        alert("Service provider not on this plateform yet");
+        console.log("Service provider not on this platform yet");
+        alert("Service provider not on this platform yet");
       }
     } catch (error) {
       console.error("Error sending request:", error);
@@ -128,14 +131,14 @@ function RoadsideAssistance() {
   // Update route when location changes if a service is selected
   useEffect(() => {
     if (
-      location.latitude &&
-      location.longitude &&
+      safeLocation.latitude &&
+      safeLocation.longitude &&
       selectedService &&
       currentRoute
     ) {
       updateRouteForNewPosition(selectedService);
     }
-  }, [location, selectedService, currentRoute]);
+  }, [safeLocation, selectedService, currentRoute]);
 
   // Function to handle requesting help
   const requestHelp = (service) => {
@@ -200,7 +203,7 @@ function RoadsideAssistance() {
                       Try Again
                     </button>
                   </div>
-                ) : (
+                ) : safeLocation.latitude && safeLocation.longitude ? (
                   <div>
                     <div className="flex items-center mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                       <div className="mr-3 bg-blue-100 dark:bg-blue-800 p-2 rounded-full">
@@ -211,8 +214,8 @@ function RoadsideAssistance() {
                           Current coordinates
                         </p>
                         <p className="font-medium text-gray-700 dark:text-gray-300">
-                          {location.latitude?.toFixed(4)},{" "}
-                          {location.longitude?.toFixed(4)}
+                          {safeLocation.latitude?.toFixed(4)},{" "}
+                          {safeLocation.longitude?.toFixed(4)}
                         </p>
                       </div>
                     </div>
@@ -226,7 +229,7 @@ function RoadsideAssistance() {
                     </div>
                     <div className="mt-6 w-full h-[300px] rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-md">
                       <GoogleMapComponent
-                        location={location}
+                        location={safeLocation}
                         mapContainerStyle={{
                           ...mapContainerStyle,
                           borderRadius: "0.75rem",
@@ -235,6 +238,16 @@ function RoadsideAssistance() {
                         map={map}
                       />
                     </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-6">
+                    <p>Waiting for location data...</p>
+                    <button
+                      onClick={retryLocation}
+                      className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+                    >
+                      Get Location
+                    </button>
                   </div>
                 )}
               </div>
@@ -322,7 +335,7 @@ function RoadsideAssistance() {
                 </h2>
               </div>
               <div className="p-6">
-                {!location.latitude || !location.longitude ? (
+                {!safeLocation.latitude || !safeLocation.longitude ? (
                   <div className="text-center py-6 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl border border-yellow-100 dark:border-yellow-800">
                     <p className="text-yellow-700 dark:text-yellow-500">
                       Please enable location to find nearby services

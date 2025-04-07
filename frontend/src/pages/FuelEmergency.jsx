@@ -24,7 +24,10 @@ function FuelEmergency() {
   const EmergencyType = "fuel";
   const { location, locationName, loading, locationError, retryLocation } =
     useLocationContext();
-    const API_URL = import.meta.env.VITE_BACKEND_URL;
+  const API_URL = import.meta.env.VITE_BACKEND_URL;
+  
+  // Ensure location is a valid object with default values to prevent null errors
+  const safeLocation = location || { latitude: null, longitude: null };
 
   const {
     map,
@@ -35,7 +38,7 @@ function FuelEmergency() {
     mapContainerStyle,
     getMapCenter,
     handleMapLoad,
-  } = useMap(location);
+  } = useMap(safeLocation);
 
   const {
     servicesWithDistances,
@@ -44,10 +47,10 @@ function FuelEmergency() {
     serviceDetails,
     loadingDetails,
     fetchServiceDetailsWithDistance,
-  } = useNearbyServices(location, EmergencyType);
+  } = useNearbyServices(safeLocation, EmergencyType);
 
   const { displayRouteOnMap, updateRouteForNewPosition } = useRouting(
-    location,
+    safeLocation,
     map,
     setCurrentRoute,
     setDestinationMarker
@@ -56,7 +59,7 @@ function FuelEmergency() {
   const { guides, selectedGuide, openGuide, closeGuide } =
     useTroubleshootingGuides();
 
-  const { emergencyLoading, handleSOS } = useEmergencyService(location);
+  const { emergencyLoading, handleSOS } = useEmergencyService(safeLocation);
 
   const fetchReqForStatus = async (serviceProviderPhone) => {
     try {
@@ -126,14 +129,14 @@ function FuelEmergency() {
   // Update route when location changes if a service is selected
   useEffect(() => {
     if (
-      location.latitude &&
-      location.longitude &&
+      safeLocation.latitude &&
+      safeLocation.longitude &&
       selectedService &&
       currentRoute
     ) {
       updateRouteForNewPosition(selectedService);
     }
-  }, [location, selectedService, currentRoute]);
+  }, [safeLocation, selectedService, currentRoute]);
 
   // Function to handle requesting help
   const requestHelp = (service) => {
@@ -198,7 +201,7 @@ function FuelEmergency() {
                       Try Again
                     </button>
                   </div>
-                ) : (
+                ) : safeLocation.latitude && safeLocation.longitude ? (
                   <div>
                     <div className="flex items-center mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                       <div className="mr-3 bg-blue-100 dark:bg-blue-800 p-2 rounded-full">
@@ -209,8 +212,8 @@ function FuelEmergency() {
                           Current coordinates
                         </p>
                         <p className="font-medium text-gray-700 dark:text-gray-300">
-                          {location.latitude?.toFixed(4)},{" "}
-                          {location.longitude?.toFixed(4)}
+                          {safeLocation.latitude?.toFixed(4)},{" "}
+                          {safeLocation.longitude?.toFixed(4)}
                         </p>
                       </div>
                     </div>
@@ -224,7 +227,7 @@ function FuelEmergency() {
                     </div>
                     <div className="mt-6 w-full h-[300px] rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-md">
                       <GoogleMapComponent
-                        location={location}
+                        location={safeLocation}
                         mapContainerStyle={{
                           ...mapContainerStyle,
                           borderRadius: "0.75rem",
@@ -233,6 +236,16 @@ function FuelEmergency() {
                         map={map}
                       />
                     </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-6">
+                    <p>Waiting for location data...</p>
+                    <button
+                      onClick={retryLocation}
+                      className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+                    >
+                      Get Location
+                    </button>
                   </div>
                 )}
               </div>
@@ -320,7 +333,7 @@ function FuelEmergency() {
                 </h2>
               </div>
               <div className="p-6">
-                {!location.latitude || !location.longitude ? (
+                {!safeLocation.latitude || !safeLocation.longitude ? (
                   <div className="text-center py-6 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl border border-yellow-100 dark:border-yellow-800">
                     <p className="text-yellow-700 dark:text-yellow-500">
                       Please enable location to find nearby services
@@ -545,7 +558,12 @@ function FuelEmergency() {
                                       "Not available" ? (
                                         <button
                                           onClick={() =>
-                                            requestAssistance(service)
+                                            requestAssistance(
+                                              serviceDetails.placeDetails.phone.replace(
+                                                /^0/,
+                                                "+91"
+                                              )
+                                            )
                                           }
                                           className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
                                         >
