@@ -1,5 +1,5 @@
 const express = require("express");
-// const cors = require("cors");
+const cors = require("cors");
 require("dotenv").config();
 const geminiRoutes = require("./routes/geminiRoute");
 const locationRoutes = require("./routes/locationRoute");
