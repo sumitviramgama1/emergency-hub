@@ -18,6 +18,8 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+app.options('*', cors()); // Enable preflight requests for all routes
+
 app.use("/api/auth", authRoutes);
 app.use("/api/gemini", geminiRoutes);
 app.use("/api/location", locationRoutes);
