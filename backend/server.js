@@ -13,7 +13,18 @@ const app = express();
 connectDB();
 app.use(bodyParser.json());
 app.use(express.json());
-app.use(cors({ origin: "*" }));
+app.use(
+  cors({
+    origin: [
+      "https://emergency-hub-kxyn.vercel.app",
+      "https://emergency-hub.vercel.app",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+app.options("*", cors()); // Handle preflight requests explicitly
 
 app.use("/api/auth", authRoutes);
 app.use("/api/gemini", geminiRoutes);
