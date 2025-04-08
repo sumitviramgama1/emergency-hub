@@ -16,6 +16,7 @@ import {
   Navigation,
   Star,
   Info,
+  X,
 } from "lucide-react";
 import useAuth from "../hooks/useAuth";
 
@@ -101,32 +102,11 @@ function MedicalEmergency() {
     }
   };
   
-  const requestAssistance = async (service) => {
-    const serviceProviderPhone = '+919898674426';
-    if (!user) {
-      alert('Please log in to request assistance');
-      return;
-    }
-  
-    try {
-      const response = await fetch(`${API_URL}/api/auth/request/send`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user.userId, serviceProviderPhone }),
-      });
-  
-      if (response.ok) {
-        alert('Request sent successfully');
-        setTimeout(() => {
-          fetchReqForStatus(); // Initial call after 15 seconds
-          setInterval(fetchReqForStatus, 4000); // Subsequent calls every 4 seconds
-        }, 15000);
-      } else {
-        alert('Failed to send request');
-      }
-    } catch (error) {
-      console.error('Error sending request:', error);
-    }
+  const requestAssistance = async (serviceProviderPhone) => {
+    window.location.href = `tel:${serviceProviderPhone}`;
+  };
+  const closeServiceDetails = () => {
+    setSelectedService(null);
   };
 
   // Update route when location changes if a service is selected
@@ -386,9 +366,10 @@ function MedicalEmergency() {
                               </div>
                             </div>
                             <div className="flex items-center justify-end space-x-3 min-w-max">
-                              <button
-                                onClick={() =>
-                                  fetchServiceDetailsWithDistance(service)
+                            <button
+                                onClick={() =>{
+                                  fetchServiceDetailsWithDistance(service);
+                                  setSelectedService(service);}
                                 }
                                 className="w-32 px-4 py-2 text-blue-600 border border-blue-200 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors dark:text-blue-400 dark:border-blue-800 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 whitespace-nowrap"
                               >
@@ -410,11 +391,17 @@ function MedicalEmergency() {
                           </div>
 
                           {/* Service Details Section - Shows when a service is selected */}
-                          {serviceDetails &&
+                          {serviceDetails &&selectedService&&
                             serviceDetails.placeDetails &&
                             serviceDetails.placeDetails.name ===
                               service.name && (
-                              <div className="mt-5 p-5 bg-gray-50 dark:bg-gray-700/30 rounded-xl border border-gray-200 dark:border-gray-700">
+                              <div className="mt-5 p-5 bg-gray-50 dark:bg-gray-700/30 rounded-xl border border-gray-200 dark:border-gray-700 relative">
+                                 <button
+                                  onClick={closeServiceDetails}
+                                  className="absolute top-3 right-3 p-1 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 rounded-full text-gray-700 dark:text-gray-300 transition-colors"
+                                >
+                                  <X size={16} />
+                                </button>
                                 {loadingDetails ? (
                                   <div className="flex justify-center items-center py-6">
                                     <div className="w-8 h-8 border-t-4 border-b-4 border-blue-500 rounded-full animate-spin"></div>
@@ -556,7 +543,7 @@ function MedicalEmergency() {
                                       {serviceDetails.placeDetails.phone !==
                                       "Not available" ? (
                                         <button
-                                          onClick={()=>requestAssistance(service)}
+                                          onClick={()=>requestAssistance(serviceDetails.placeDetails.phone.replace(/^0/, "+91"))}
                                           className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
                                         >
                                           <Phone size={16} />

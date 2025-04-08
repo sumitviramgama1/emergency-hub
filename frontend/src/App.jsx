@@ -15,7 +15,8 @@ import ServiceProviderLogin from "./pages/ServiceProviderLogin";
 import ServiceProviderSignup from "./pages/ServiceProviderSignup";
 import Landing from "./pages/Landing";
 import ServiceProviderDashboard from "./pages/ServiceProviderDashboard";
-import ProtectedRoute from "./components/ProtectedRoute"; // Import ProtectedRoute
+import ContactUs from "./pages/ContactUs"; // Import the new Contact Us page
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -25,8 +26,7 @@ function App() {
           <Navbar />
           <main className="container mx-auto px-4 py-8">
             <Routes>
-              <Route path="/" element={<Landing />} />{" "}
-              {/* Landing page as default */}
+              <Route path="/" element={<Landing />} />
               <Route path="/user-login" element={<UserLogin />} />
               <Route path="/user-signup" element={<UserSignup />} />
               <Route
@@ -37,6 +37,8 @@ function App() {
                 path="/service-provider-signup"
                 element={<ServiceProviderSignup />}
               />
+              <Route path="/contact" element={<ContactUs />} /> {/* Add the Contact Us route */}
+              
               {/* Protected Routes */}
               <Route element={<ProtectedRoute />}>
                 <Route path="/home/*" element={<Home />} />

@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Home, Phone, Ambulance, Fuel, MapPin, LogOut, AlertCircle, Grid } from "lucide-react";
+import { Home, Phone, Ambulance, Fuel, MapPin, LogOut, AlertCircle, Grid, Mail } from "lucide-react";
 
 function Navbar() {
   const isLoggedIn = localStorage.getItem("isLoggedIn");
@@ -22,9 +22,9 @@ function Navbar() {
 
   return (
     <nav className="fixed top-0 w-full z-50 bg-gradient-to-br from-blue-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 shadow-lg">
-      <div className="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
-        {/* Left Side - Logo */}
-        <div className="flex items-center">
+      <div className="w-full px-0 py-3 flex justify-between items-center">
+        {/* Left Side - Logo - Now flush with left edge */}
+        <div className="flex items-center pl-2">
           <Link to="/home" className="text-2xl font-extrabold text-blue-800 dark:text-blue-400 flex items-center gap-2">
             <Home size={24} />
             Emergency Assist
@@ -68,10 +68,17 @@ function Navbar() {
             <Grid size={16} />
             Services
           </Link>
+          <Link 
+            to="/contact" 
+            className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+          >
+            <Mail size={16} />
+            Contact Us
+          </Link>
         </div>
         
-        {/* Right Side - Action Buttons */}
-        <div className="flex items-center space-x-4">
+        {/* Right Side - Action Buttons - Now flush with right edge */}
+        <div className="flex items-center space-x-4 pr-2">
           <button
             onClick={handleSOS}
             className="relative inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full shadow-xl transform transition-all hover:scale-105"
