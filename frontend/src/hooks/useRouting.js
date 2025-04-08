@@ -3,6 +3,7 @@ import axios from 'axios';
 
 export const useRouting = (location, map, setCurrentRoute, setDestinationMarker) => {
   // Get route to a service
+  const API_URL = import.meta.env.VITE_BACKEND_URL; // Use environment variable for API URL
   const getRouteToService = async (service) => {
     if (!location.latitude || !location.longitude || !service.geometry) {
       return null;
@@ -10,7 +11,7 @@ export const useRouting = (location, map, setCurrentRoute, setDestinationMarker)
 
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/roadside-services/route`,
+        `${API_URL}/api/roadside-services/route`,
         {
           params: {
             origin: `${location.latitude},${location.longitude}`,
@@ -78,7 +79,7 @@ export const useRouting = (location, map, setCurrentRoute, setDestinationMarker)
             map: map,
             title: service.name,
             icon: {
-                url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
+                url: "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
                 scaledSize: new window.google.maps.Size(40, 40),
             },
         });

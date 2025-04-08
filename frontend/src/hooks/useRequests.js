@@ -5,13 +5,13 @@ const useRequests = (serviceProviderId) => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const API_URL = import.meta.env.VITE_BACKEND_URL; // Use environment variable for API URL
   const fetchRequests = async () => {
 
     // setLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:5000/api/auth/requests?serviceProviderId=${serviceProviderId}`
+        `${API_URL}/api/auth/requests?serviceProviderId=${serviceProviderId}`
       );
       const data = await response.json();
       if (response.ok) {
@@ -32,7 +32,7 @@ const useRequests = (serviceProviderId) => {
 
   const acceptRequest = async (requestId) => {
     try {
-      const response = await fetch('http://localhost:5000/api/auth/request/accept', {
+      const response = await fetch(`${API_URL}/api/auth/request/accept`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ requestId }),
@@ -55,7 +55,7 @@ const useRequests = (serviceProviderId) => {
 
   const rejectRequest = async (requestId) => {
     try {
-      const response = await fetch('http://localhost:5000/api/auth/request/reject', {
+      const response = await fetch(`${API_URL}/api/auth/request/reject`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ requestId }),

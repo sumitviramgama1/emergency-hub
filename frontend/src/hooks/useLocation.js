@@ -8,6 +8,7 @@ export const useLocation = (skipFetch = false) => {
   const [loading, setLoading] = useState(!skipFetch);
   const [locationError, setLocationError] = useState(null);
   const [watchId, setWatchId] = useState(null);
+  const API_URL = import.meta.env.VITE_BACKEND_URL; // Use environment variable for API URL
 
   // Helper function to collect WiFi access point data if available
   const collectWifiData = async () => {
@@ -25,7 +26,7 @@ export const useLocation = (skipFetch = false) => {
   const fetchLocationName = async (latitude, longitude) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/location/location-name?latitude=${latitude}&longitude=${longitude}`
+        `${API_URL}/api/location/location-name?latitude=${latitude}&longitude=${longitude}`
       );
 
       if (response.data.success) {
@@ -90,7 +91,7 @@ export const useLocation = (skipFetch = false) => {
       const cellData = await collectCellData();
 
       const response = await axios.post(
-        "http://localhost:5000/api/location/current-location",
+        `${API_URL}/api/location/current-location`,
         {
           considerIp: "true",
           wifiAccessPoints: wifiData,

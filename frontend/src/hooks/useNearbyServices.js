@@ -7,14 +7,14 @@ export const useNearbyServices = (location,EmergencyType) => {
   const [selectedService, setSelectedService] = useState(null);
   const [serviceDetails, setServiceDetails] = useState(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
-
+  const API_URL=import.meta.env.VITE_BACKEND_URL;
   // Fetch nearby services based on location
   useEffect(() => {
     if (location.latitude && location.longitude) {
       const fetchNearbyServices = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:5000/api/roadside-services/nearby?latitude=${location.latitude}&longitude=${location.longitude}&EmergencyType=${EmergencyType}`
+            `${API_URL}/api/roadside-services/nearby?latitude=${location.latitude}&longitude=${location.longitude}&EmergencyType=${EmergencyType}`
           );
 
           if (response.data.results) {
@@ -39,7 +39,7 @@ export const useNearbyServices = (location,EmergencyType) => {
 
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/roadside-services/distance-duration`,
+        `${API_URL}/api/roadside-services/distance-duration`,
         {
           params: {
             origins: `${location.latitude},${location.longitude}`,
@@ -91,7 +91,7 @@ export const useNearbyServices = (location,EmergencyType) => {
     try {
       const origin = `${location.latitude},${location.longitude}`;
       const response = await axios.get(
-        `http://localhost:5000/api/roadside-services/service-details-with-distance`,
+        `${API_URL}/api/roadside-services/service-details-with-distance`,
         {
           params: {
             placeId: service.place_id,
