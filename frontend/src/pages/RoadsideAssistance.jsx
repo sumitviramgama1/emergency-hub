@@ -16,6 +16,7 @@ import {
   Navigation,
   Star,
   Info,
+  X,
 } from "lucide-react";
 import useAuth from "../hooks/useAuth";
 import axios from "axios";
@@ -57,7 +58,6 @@ function RoadsideAssistance() {
   );
   const API_URL = import.meta.env.VITE_BACKEND_URL;
 
-
   const { guides, selectedGuide, openGuide, closeGuide } =
     useTroubleshootingGuides();
 
@@ -65,16 +65,13 @@ function RoadsideAssistance() {
 
   const fetchReqForStatus = async (serviceProviderPhone) => {
     if (!user || !user.userId) return;
-    
+
     try {
-      const response = await axios.get(
-        `${API_URL}/api/auth/srequests`,
-        {
-          params: {
-            userId: user.userId,
-          },
-        }
-      );
+      const response = await axios.get(`${API_URL}/api/auth/srequests`, {
+        params: {
+          userId: user.userId,
+        },
+      });
       const data = await response.data;
 
       if (data.message === "Request accepted") {
@@ -101,14 +98,11 @@ function RoadsideAssistance() {
     }
 
     try {
-      const response = await fetch(
-        `${API_URL}/api/auth/request/send`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: user.userId, serviceProviderPhone }),
-        }
-      );
+      const response = await fetch(`${API_URL}/api/auth/request/send`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.userId, serviceProviderPhone }),
+      });
 
       if (response.ok) {
         alert("Request sent successfully");
@@ -126,6 +120,9 @@ function RoadsideAssistance() {
     } catch (error) {
       console.error("Error sending request:", error);
     }
+  };
+  const closeServiceDetails = () => {
+    setSelectedService(null);
   };
 
   // Update route when location changes if a service is selected
@@ -416,6 +413,12 @@ function RoadsideAssistance() {
                             serviceDetails.placeDetails.name ===
                               service.name && (
                               <div className="mt-5 p-5 bg-gray-50 dark:bg-gray-700/30 rounded-xl border border-gray-200 dark:border-gray-700">
+                                <button
+                                  onClick={closeServiceDetails}
+                                  className="absolute top-3 right-3 p-1 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 rounded-full text-gray-700 dark:text-gray-300 transition-colors"
+                                >
+                                  <X size={16} />
+                                </button>
                                 {loadingDetails ? (
                                   <div className="flex justify-center items-center py-6">
                                     <div className="w-8 h-8 border-t-4 border-b-4 border-blue-500 rounded-full animate-spin"></div>

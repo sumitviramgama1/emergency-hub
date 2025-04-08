@@ -6,13 +6,13 @@ const cors = require("cors");
 const router = express.Router();
 const apiKey = process.env.GOOGLE_MAPS_API_KEY;
 const corsOptions = {
-  origin: ["https://emergency-hub-kxyn.vercel.app", "http://localhost:3000"],
+  origin: ["https://emergency-hub-kxyn.vercel.app", "http://localhost:5173"],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 // Get nearby roadside assistance services
-router.get("/nearby",cors(corsOptions), async (req, res) => {
+router.get("/nearby", cors(corsOptions), async (req, res) => {
   try {
     const { latitude, longitude, EmergencyType } = req.query;
     let placesUrl;
@@ -24,8 +24,8 @@ router.get("/nearby",cors(corsOptions), async (req, res) => {
       placesUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=5000&type=gas_station|petrol_pump|fuel|fuel_station&key=${apiKey}`;
     } else if (EmergencyType == "hospital") {
       placesUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=5000&type=hospital&key=${apiKey}`;
-    }else if(EmergencyType=="generalservice"){
-      placesUrl=`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=5000&type=restaurant|mall|mart|store&key=${apiKey}`
+    } else if (EmergencyType == "generalservice") {
+      placesUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=5000&type=restaurant|mall|mart|store&key=${apiKey}`;
     }
     const response = await axios.get(placesUrl);
     res.json(response.data);
@@ -34,7 +34,7 @@ router.get("/nearby",cors(corsOptions), async (req, res) => {
   }
 });
 // Get details for a specific place
-router.get("/place-details",cors(corsOptions), async (req, res) => {
+router.get("/place-details", cors(corsOptions), async (req, res) => {
   try {
     const { placeId } = req.query;
     const apiKey = process.env.GOOGLE_MAPS_API_KEY;
@@ -47,7 +47,7 @@ router.get("/place-details",cors(corsOptions), async (req, res) => {
     res.status(500).json({ error: "Failed to fetch place details" });
   }
 });
-router.get("/distance-duration",cors(corsOptions), async (req, res) => {
+router.get("/distance-duration", cors(corsOptions), async (req, res) => {
   try {
     const { origins, destinations } = req.query;
 
@@ -98,7 +98,7 @@ router.get("/distance-duration",cors(corsOptions), async (req, res) => {
   }
 });
 
-router.get("/route",cors(corsOptions), async (req, res) => {
+router.get("/route", cors(corsOptions), async (req, res) => {
   try {
     const { origin, destination } = req.query;
 
@@ -150,73 +150,77 @@ router.get("/route",cors(corsOptions), async (req, res) => {
 });
 
 // Add this combined route to roadsideServiceRoute.js
-router.get("/service-details-with-distance",cors(corsOptions), async (req, res) => {
-  try {
-    const { placeId, origin } = req.query;
+router.get(
+  "/service-details-with-distance",
+  cors(corsOptions),
+  async (req, res) => {
+    try {
+      const { placeId, origin } = req.query;
 
-    if (!placeId || !origin) {
-      return res.status(400).json({
-        error: "Missing required parameters",
-        message: "Both placeId and origin are required",
-      });
-    }
+      if (!placeId || !origin) {
+        return res.status(400).json({
+          error: "Missing required parameters",
+          message: "Both placeId and origin are required",
+        });
+      }
 
-    // Get place details first
-    const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,formatted_phone_number,website,rating,formatted_address,geometry,opening_hours&key=${apiKey}`;
-    const detailsResponse = await axios.get(detailsUrl);
+      // Get place details first
+      const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,formatted_phone_number,website,rating,formatted_address,geometry,opening_hours&key=${apiKey}`;
+      const detailsResponse = await axios.get(detailsUrl);
 
-    if (!detailsResponse.data.result) {
-      return res.status(404).json({
-        error: "Place not found",
-        message: "Could not find details for the specified place ID",
-      });
-    }
+      if (!detailsResponse.data.result) {
+        return res.status(404).json({
+          error: "Place not found",
+          message: "Could not find details for the specified place ID",
+        });
+      }
 
-    const placeDetails = detailsResponse.data.result;
-    const destination = `${placeDetails.geometry.location.lat},${placeDetails.geometry.location.lng}`;
+      const placeDetails = detailsResponse.data.result;
+      const destination = `${placeDetails.geometry.location.lat},${placeDetails.geometry.location.lng}`;
 
-    // Then get distance and duration
-    const distanceMatrixUrl = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&key=${apiKey}`;
-    const distanceResponse = await axios.get(distanceMatrixUrl);
+      // Then get distance and duration
+      const distanceMatrixUrl = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&key=${apiKey}`;
+      const distanceResponse = await axios.get(distanceMatrixUrl);
 
-    let distanceInfo = null;
-    if (
-      distanceResponse.data.rows &&
-      distanceResponse.data.rows.length > 0 &&
-      distanceResponse.data.rows[0].elements &&
-      distanceResponse.data.rows[0].elements.length > 0
-    ) {
-      const element = distanceResponse.data.rows[0].elements[0];
-      distanceInfo = {
-        distance: element.distance ? element.distance.text : "Unknown",
-        duration: element.duration ? element.duration.text : "Unknown",
-        status: element.status,
+      let distanceInfo = null;
+      if (
+        distanceResponse.data.rows &&
+        distanceResponse.data.rows.length > 0 &&
+        distanceResponse.data.rows[0].elements &&
+        distanceResponse.data.rows[0].elements.length > 0
+      ) {
+        const element = distanceResponse.data.rows[0].elements[0];
+        distanceInfo = {
+          distance: element.distance ? element.distance.text : "Unknown",
+          duration: element.duration ? element.duration.text : "Unknown",
+          status: element.status,
+        };
+      }
+
+      // Combine both results
+      const combinedResult = {
+        success: true,
+        placeDetails: {
+          name: placeDetails.name,
+          address: placeDetails.formatted_address,
+          phone: placeDetails.formatted_phone_number || "Not available",
+          website: placeDetails.website || "Not available",
+          rating: placeDetails.rating || "Not rated",
+          opening_hours: placeDetails.opening_hours || null,
+          location: placeDetails.geometry.location,
+        },
+        distanceInfo: distanceInfo,
       };
+
+      res.json(combinedResult);
+    } catch (error) {
+      console.error("Service details with distance error:", error.message);
+      res.status(500).json({
+        error: "Failed to fetch combined service details",
+        message: error.message,
+      });
     }
-
-    // Combine both results
-    const combinedResult = {
-      success: true,
-      placeDetails: {
-        name: placeDetails.name,
-        address: placeDetails.formatted_address,
-        phone: placeDetails.formatted_phone_number || "Not available",
-        website: placeDetails.website || "Not available",
-        rating: placeDetails.rating || "Not rated",
-        opening_hours: placeDetails.opening_hours || null,
-        location: placeDetails.geometry.location,
-      },
-      distanceInfo: distanceInfo,
-    };
-
-    res.json(combinedResult);
-  } catch (error) {
-    console.error("Service details with distance error:", error.message);
-    res.status(500).json({
-      error: "Failed to fetch combined service details",
-      message: error.message,
-    });
   }
-});
+);
 
 module.exports = router;
