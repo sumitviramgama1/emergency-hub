@@ -20,20 +20,30 @@ const UserSignup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch(`${API_URL}/api/auth/register/user`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username,
-        password,
-        phoneNumber: `${countryCode}${phoneNumber}`,
-      }),
-    });
-    const data = await response.json();
-    if (data.message) {
-      navigate("/user-login");
-    } else {
-      alert("Signup failed");
+    try {
+      const response = await fetch(`${API_URL}/api/auth/register/user`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username,
+          password,
+          phoneNumber: `${countryCode}${phoneNumber}`,
+        }),
+      });
+
+      const data = await response.json();
+      console.log("Signup response:", data); // 👈 Add this
+
+      if (response.ok) {
+        alert("Signup successful!");
+        navigate("/user-login");
+      } else {
+        alert(
+          `Signup failed: ${data.error || data.details || "Unknown error"}`
+        );
+      }
+    } catch (err) {
+      alert("Network error: " + err.message);
     }
   };
 
